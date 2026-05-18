@@ -361,3 +361,5 @@ MigrationBackup/
 
 # Fody - auto-generated XML schema
 FodyWeavers.xsd
+/src/shiko-profile-provider.Api/appsettings.json
+/src/shiko-profile-provider.Api/appsettings.Development.json
