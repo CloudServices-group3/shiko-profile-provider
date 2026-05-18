@@ -1,0 +1,13 @@
+<Solution>
+  <Folder Name="/src/">
+    <Project Path="src/shiko-profile-provider.Api/shiko-profile-provider.Api.csproj" />
+    <Project Path="src/shiko-profile-provider.Application/shiko-profile-provider.Application.csproj" />
+    <Project Path="src/shiko-profile-provider.Domain/shiko-profile-provider.Domain.csproj" />
+    <Project Path="src/shiko-profile-provider.Infrastructure/shiko-profile-provider.Infrastructure.csproj" />
+  </Folder>
+  <Folder Name="/tests/">
+    <Project Path="tests/shiko-profile-provider.End2EndTests/shiko-profile-provider.End2EndTests.csproj" />
+    <Project Path="tests/shiko-profile-provider.IntergrationTests/shiko-profile-provider.IntergrationTests.csproj" />
+    <Project Path="tests/shiko-profile-provider.UnitTests/shiko-profile-provider.UnitTests.csproj" />
+  </Folder>
+</Solution>
