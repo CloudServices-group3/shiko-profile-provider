@@ -8,14 +8,14 @@ namespace shiko_profile_provider.Infrastructure.Persistence.Repositories;
 
 public class ProfileRepository(DataContext context) : IProfileRepository
 {
-    public async Task<ProfileEntity?> CreateAsync(ProfileEntity? profile)
+    public async Task<ProfileEntity?> CreateAsync(ProfileEntity profile)
     {
         context.Profiles.Add(profile);
         await context.SaveChangesAsync();
         return profile;
     }
 
-    public async Task<ProfileEntity?> UpdateAsync(Guid id, ProfileEntity? profile)
+    public async Task<ProfileEntity?> UpdateAsync(Guid id, ProfileEntity profile)
     {
         var existing = await context.Profiles.FindAsync(id);
         if (existing is null) return null;

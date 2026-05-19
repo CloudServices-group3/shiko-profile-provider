@@ -1,3 +1,4 @@
+using shiko_profile_provider.Api.Endpoints;
 using shiko_profile_provider.Infrastructure.Persistence;
 using shiko_profile_provider.Infrastructure.Persistence.Contexts;
 
@@ -26,5 +27,7 @@ using (var scope = app.Services.CreateScope())
     var context = scope.ServiceProvider.GetRequiredService<DataContext>();
     await context.Database.EnsureCreatedAsync();
 }
+
+app.MapProfileEndpoints();
 
 app.Run();
