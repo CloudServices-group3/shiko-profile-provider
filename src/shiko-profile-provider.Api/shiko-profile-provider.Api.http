@@ -1,3 +1,37 @@
 @shiko_profile_provider.Api_HostAddress = https://localhost:4443
 
-###
+### Create profile
+POST {{shiko_profile_provider.Api_HostAddress}}/api/profiles
+Accept: application/json
+Content-Type: application/json
+
+{
+  "id": "guid",
+  "firstname": "Maria",
+  "lastname": "Magnell",
+  "phonenumber": "123",
+  "decription": "ABC"
+}
+
+### Get All profiles
+GET {{shiko_profile_provider.Api_HostAddress}}/api/profile
+Accept: application/json
+
+### Get profile by id
+GET {{shiko_profile_provider.Api_HostAddress}}/api/profile/1
+Accept: application/json
+
+### Update profile
+PUT {{shiko_profile_provider.Api_HostAddress}}/api/profiles/1
+Accept: application/json
+Content-Type: application/json
+
+{
+  "firstname": "Tommy",
+  "lastname": "Magnell",
+  "phonenumber": "321",
+  "decription": "ABC"
+}
+
+### Delete profile
+DELETE {{shiko_profile_provider.Api_HostAddress}}/api/profile/1
