@@ -6,7 +6,7 @@ Accept: application/json
 Content-Type: application/json
 
 {
-  "id": "guid",
+  "id": "123e4567-e89b-12d3-a456-426655440000",
   "firstname": "Maria",
   "lastname": "Magnell",
   "phonenumber": "123",
@@ -18,11 +18,11 @@ GET {{shiko_profile_provider.Api_HostAddress}}/api/profile
 Accept: application/json
 
 ### Get profile by id
-GET {{shiko_profile_provider.Api_HostAddress}}/api/profile/1
+GET {{shiko_profile_provider.Api_HostAddress}}/api/profile/123e4567-e89b-12d3-a456-426655440000
 Accept: application/json
 
 ### Update profile
-PUT {{shiko_profile_provider.Api_HostAddress}}/api/profiles/1
+PUT {{shiko_profile_provider.Api_HostAddress}}/api/profiles/123e4567-e89b-12d3-a456-426655440000
 Accept: application/json
 Content-Type: application/json
 
@@ -34,4 +34,4 @@ Content-Type: application/json
 }
 
 ### Delete profile
-DELETE {{shiko_profile_provider.Api_HostAddress}}/api/profile/1
+DELETE {{shiko_profile_provider.Api_HostAddress}}/api/profile/123e4567-e89b-12d3-a456-426655440000
