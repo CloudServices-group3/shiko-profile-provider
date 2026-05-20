@@ -2,8 +2,8 @@
 
 public class ProfileEntity
 {
-    public string UserId { get; private set; } = null!; // Id from Identity
     public Guid Id { get; private set; }
+    public string UserId { get; private set; } = null!; // Id from Identity
     public string FirstName { get; private set; } = null!;
     public string LastName { get; private set; } = null!;
     public string? PhoneNumber { get; private set; }
@@ -14,9 +14,10 @@ public class ProfileEntity
     {
     }
 
-    public ProfileEntity(string firstName, string lastName, string? phoneNumber, string? description, string? profileImage)
+    public ProfileEntity(string userId, string firstName, string lastName, string? phoneNumber, string? description, string? profileImage)
     {
-        // Controll for the rules.
+        // Controll of the rules.
+        SetUserId(userId);
         SetFirstName(firstName);
         SetLastName(lastName);
         SetPhoneNumber(phoneNumber);
@@ -26,12 +27,20 @@ public class ProfileEntity
 
     public void UpdateProfile(string firstName, string lastName, string? phoneNumber, string? description, string? profileImage)
     {
-        // Controll for the rules.
+        // Controll of the rules.
         SetFirstName(firstName);
         SetLastName(lastName);
         SetPhoneNumber(phoneNumber);
         SetDescription(description);
         SetProfileImage(profileImage);
+    }
+
+    public void SetUserId(string userId)
+    {
+        if (string.IsNullOrWhiteSpace(userId))
+            throw new ArgumentException("UserId cannot be empty.", nameof(userId));
+
+        UserId = userId.Trim();
     }
 
     public void SetFirstName(string firstName)
