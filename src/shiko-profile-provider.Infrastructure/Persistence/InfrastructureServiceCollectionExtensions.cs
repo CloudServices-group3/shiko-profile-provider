@@ -13,20 +13,25 @@ public static class InfrastructureServiceCollectionExtensions
 {
     public static IServiceCollection AddInfrastructure(this IServiceCollection services, IConfiguration configuration, IHostEnvironment env)
     {
-        // In memory db
-        services.AddSingleton(_ =>
+        if(env.IsDevelopment())
         {
-            var connection = new SqliteConnection("Data Source=:memory:");
-            connection.Open();
-            return connection;
-        });
+            services.AddSingleton<SqliteConnection>(_ =>
+            {
+                var connection = new SqliteConnection("DataSource=:memory:;");
+                connection.Open();
+                return connection;
+            });
 
-        // Get memory db service
-        services.AddDbContext<DataContext>((sp, options) =>
+            services.AddDbContext<DataContext>((sp, options) =>
+            {
+                var connection = sp.GetRequiredService<SqliteConnection>();
+                options.UseSqlite(connection);
+            });
+        }
+        else
         {
-            var connection = sp.GetRequiredService<SqliteConnection>();
-            options.UseSqlite(connection);
-        });
+            services.AddDbContext<DataContext>(options => options.UseSqlServer(configuration.GetConnectionString("SqlConnection")));
+        }
 
         services.AddScoped<IProfileRepository, ProfileRepository>();
 
