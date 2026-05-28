@@ -13,7 +13,6 @@ public static class ProfileEndpoints
 
         var group = app.MapGroup("/api/profiles")
             .WithTags("Profiles");
-            //.RequireAuthorization();
 
         group.MapGet("/", GetAll)
             .WithName("GetAllProfiles")
@@ -60,17 +59,10 @@ public static class ProfileEndpoints
     // Me
     static async Task<IResult> Me (ClaimsPrincipal user, IProfileRepository repo, CancellationToken ct = default)
     {
-        foreach(var claim in user.Claims)
-        {
-            Console.WriteLine($"{claim.Type}: {claim.Value}");
-        }
         var userId = user.FindFirstValue(ClaimTypes.NameIdentifier) ?? user.FindFirstValue("sub");
-
-        Console.WriteLine($"UserID = {userId}");
 
         if (string.IsNullOrWhiteSpace(userId))
             return Results.Unauthorized();
-
         var profile = await repo.GetAsync(x => x.UserId == userId);
 
         if (profile is null)
@@ -125,14 +117,8 @@ public static class ProfileEndpoints
 
         profile.UpdateProfile(request.FirstName, request.LastName, request.PhoneNumber, request.Description, request.ProfileImage);
 
-        await repo.SaveChangesAsync();
-
+        await repo.UpdateAsync(profile.Id, profile);
         return Results.Ok(ToResult(profile));
-
-        //profile.UpdateProfile(request.FirstName, request.LastName, request.PhoneNumber, request.Description, request.ProfileImage);
-
-        //await repo.UpdateAsync(profile.Id, profile);
-        //return Results.Ok(ToResult(profile));
     }
 
     // Delete profile

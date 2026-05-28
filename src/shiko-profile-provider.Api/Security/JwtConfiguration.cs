@@ -20,7 +20,7 @@ public static class JwtConfiguration
             .AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
             .AddJwtBearer(options =>
             {
-                options.Authority = "https://shiko-auth-api-2.azurewebsites.net";
+                options.Authority = "https://shiko-auth-api-2.azurewebsites.net/api/auth/me";
 
                 options.TokenValidationParameters = new TokenValidationParameters
                 {
