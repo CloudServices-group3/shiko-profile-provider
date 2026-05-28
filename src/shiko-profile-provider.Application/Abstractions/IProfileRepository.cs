@@ -12,5 +12,7 @@ public interface IProfileRepository
     Task<bool> ExistsAsync(Expression<Func<ProfileEntity, bool>> expression);
     Task<IEnumerable<ProfileEntity>> GetAllAsync();
     Task<ProfileEntity?> GetAsync(Expression<Func<ProfileEntity, bool>> expression);
-    Task<ProfileEntity?> UpdateAsync(Guid id, ProfileEntity profile);
+    //Task<ProfileEntity?> UpdateAsync(Guid id, ProfileEntity profile);
+
+    Task SaveChangesAsync();
 }
