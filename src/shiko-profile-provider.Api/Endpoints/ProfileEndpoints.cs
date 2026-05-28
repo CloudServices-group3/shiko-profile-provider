@@ -1,4 +1,5 @@
-﻿using shiko_profile_provider.Application.Abstractions;
+﻿using shiko_profile_provider.Api.Security;
+using shiko_profile_provider.Application.Abstractions;
 using shiko_profile_provider.Application.Dtos;
 using shiko_profile_provider.Domain.Entities;
 using System.Security.Claims;
@@ -9,10 +10,10 @@ public static class ProfileEndpoints
 {
     public static void MapProfileEndpoints(this WebApplication app)
     {
-        
+
         var group = app.MapGroup("/api/profiles")
-            .WithTags("Profiles")
-            .RequireAuthorization();
+            .WithTags("Profiles");
+            //.RequireAuthorization();
 
         group.MapGet("/", GetAll)
             .WithName("GetAllProfiles")
@@ -27,51 +28,74 @@ public static class ProfileEndpoints
             .Produces<ProfileResult>()
             .Produces(StatusCodes.Status404NotFound);
 
+        group.MapGet("/me", Me)
+            .RequireAuthorization();
+
         group.MapPost("/", Create)
             .WithName("CreateProfile")
             .WithSummary("Create a new profile")
             .WithDescription("Creates a new profile and returns the created resource with its assigned ID.")
             .Produces<ProfileResult>(StatusCodes.Status201Created)
-            .Produces(StatusCodes.Status500InternalServerError);
+            .Produces(StatusCodes.Status500InternalServerError)
+            .RequireAuthorization();
 
-        group.MapPut("/{id:guid}", Update)
+        group.MapPut("/", Update)
             .WithName("UpdateProfile")
             .WithSummary("Updated an existing profile")
             .WithDescription("Updates all fields of an existing profile identified by its ID.")
             .Produces<ProfileResult>()
             .Produces(StatusCodes.Status404NotFound)
-            .Produces(StatusCodes.Status500InternalServerError);
+            .Produces(StatusCodes.Status500InternalServerError)
+            .RequireAuthorization(); 
 
         group.MapDelete("/{id:guid}", Delete)
             .WithName("DeleteProfile")
             .WithSummary("Delete a profile")
             .WithDescription("Permanently deletes the product with the specified ID.")
             .Produces(StatusCodes.Status204NoContent)
-            .Produces(StatusCodes.Status404NotFound);
+            .Produces(StatusCodes.Status404NotFound)
+            .RequireAuthorization();
+    }
+
+    // Me
+    static async Task<IResult> Me (ClaimsPrincipal user, IProfileRepository repo, CancellationToken ct = default)
+    {
+        var userId = user.FindFirstValue(ClaimTypes.NameIdentifier) ?? user.FindFirstValue("sub");
+
+        if (string.IsNullOrWhiteSpace(userId))
+            return Results.Unauthorized();
+        var profile = await repo.GetAsync(x => x.UserId == userId);
+
+        if (profile is null)
+            return Results.NotFound();
+
+        return Results.Ok(ToResult(profile));
     }
 
     // Get all profiles
-    static async Task<IResult> GetAll(IProfileRepository repo, CancellationToken ct)
+    static async Task<IResult> GetAll(IProfileRepository repo, CancellationToken ct = default)
     {
         var profile = await repo.GetAllAsync();
         return Results.Ok(profile.Select(ToResult));
     }
 
     // Get profile by Id
-    static async Task<IResult> GetById(Guid id, IProfileRepository repo, CancellationToken ct)
+    static async Task<IResult> GetById(Guid id, IProfileRepository repo, CancellationToken ct = default)
     {
         var profile = await repo.GetAsync(x => x.Id == id);
         return profile is null ? Results.NotFound() : Results.Ok(ToResult(profile));
     }
 
     // Create new profile
-    static async Task<IResult> Create(ProfileRequest request, ClaimsPrincipal user, IProfileRepository repo, CancellationToken ct)
+    static async Task<IResult> Create(ProfileRequest request, ClaimsPrincipal user, IProfileRepository repo, CancellationToken ct = default)
     {
-        var userId = user.FindFirstValue(ClaimTypes.NameIdentifier); // Fetch UserId from Identity
+        var userId = user.FindFirstValue(ClaimTypes.NameIdentifier) ?? user.FindFirstValue("sub"); // Fetch UserId from Identity
         if (string.IsNullOrWhiteSpace(userId))
             return Results.Unauthorized();
 
         var exists = await repo.ExistsAsync(x => x.UserId == userId);
+        if (exists)
+            return Results.Conflict("Profile already exists.");
 
         var profile = new ProfileEntity(userId, request.FirstName, request.LastName, request.PhoneNumber, request.Description, request.ProfileImage); // Save UserId in ProfileEntity
 
@@ -81,20 +105,25 @@ public static class ProfileEndpoints
     }
 
     // Update profile
-    static async Task<IResult> Update(Guid id, ProfileRequest request, IProfileRepository repo, CancellationToken ct)
+    static async Task<IResult> Update(ProfileRequest request, ClaimsPrincipal user, IProfileRepository repo, CancellationToken ct = default)
     {
-        var profile = await repo.GetAsync(x => x.Id == id);
+        var userId = user.FindFirstValue(ClaimTypes.NameIdentifier) ?? user.FindFirstValue("sub");
+
+        if (string.IsNullOrWhiteSpace(userId))
+            return Results.Unauthorized();
+
+        var profile = await repo.GetAsync(x => x.UserId == userId);
         if (profile is null)
             return Results.NotFound();
 
         profile.UpdateProfile(request.FirstName, request.LastName, request.PhoneNumber, request.Description, request.ProfileImage);
 
-        var updated = await repo.UpdateAsync(id, profile);
+        var updated = await repo.UpdateAsync(profile.Id, profile);
         return updated is null ? Results.Problem() : Results.Ok(ToResult(updated));
     }
 
     // Delete profile
-    static async Task<IResult> Delete(Guid id, IProfileRepository repo, CancellationToken ct)
+    static async Task<IResult> Delete(Guid id, IProfileRepository repo, CancellationToken ct = default)
     {
         var deleted = await repo.DeleteAsync(id);
         return deleted ? Results.NoContent() : Results.NotFound();

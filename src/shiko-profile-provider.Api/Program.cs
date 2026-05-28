@@ -1,56 +1,23 @@
 using shiko_profile_provider.Api.Endpoints;
+using shiko_profile_provider.Api.OpenApi;
+using shiko_profile_provider.Api.Security;
 using shiko_profile_provider.Infrastructure.Persistence;
 using shiko_profile_provider.Infrastructure.Persistence.Contexts;
-using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Microsoft.IdentityModel.Tokens;
-using Microsoft.EntityFrameworkCore;
-using Scalar.AspNetCore;
-using System.Text;
 
 
 var builder = WebApplication.CreateBuilder(args);
 
+builder.Services.AddCors();
+builder.Services.AddJwtAuthentication(builder.Configuration);
+builder.Services.AddProfileProviderOpenApi();
 builder.Services.AddInfrastructure(builder.Configuration, builder.Environment);
-
-builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
-    .AddJwtBearer(options =>
-    {
-        options.TokenValidationParameters = new TokenValidationParameters
-        {
-            ValidateIssuer = true,
-            ValidateAudience = true,
-            ValidateLifetime = true,
-            ValidateIssuerSigningKey = true,
-
-            ValidIssuer = builder.Configuration["Jwt:Issuer"],
-            ValidAudience = builder.Configuration["Jwt:Audience"],
-
-            IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["Jwt:Key"]!))
-        };
-    });
-
 builder.Services.AddAuthorization();
-
-// Add services to the container.
-// Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
 builder.Services.AddOpenApi();
 
 var app = builder.Build();
 
-// Configure the HTTP request pipeline.
-if (app.Environment.IsDevelopment())
-{
-    app.MapOpenApi();
-
-    app.MapScalarApiReference(options =>
-    {
-        options.Title = "Shiko Profile Provider API";
-        options.Theme = ScalarTheme.Default;
-        options.DefaultHttpClient = new(ScalarTarget.CSharp, ScalarClient.HttpClient);
-    });
-}
-
 app.UseHttpsRedirection();
+app.UseCors(x => x.AllowAnyHeader().AllowAnyOrigin().AllowAnyMethod());
 
 app.UseAuthentication();
 app.UseAuthorization();
@@ -62,6 +29,7 @@ using (var scope = app.Services.CreateScope())
     await context.Database.EnsureCreatedAsync();
 }
 
+app.MapOpenApiEndpoints();
 app.MapProfileEndpoints();
 
 app.Run();
