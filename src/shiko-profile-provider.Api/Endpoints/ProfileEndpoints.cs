@@ -109,7 +109,7 @@ public static class ProfileEndpoints
     {
         var userId = user.FindFirstValue(ClaimTypes.NameIdentifier) ?? user.FindFirstValue("sub");
 
-        if (string.IsNullOrWhiteSpace(userId))
+        if (string.IsNullOrEmpty(userId))
             return Results.Unauthorized();
 
         var profile = await repo.GetAsync(x => x.UserId == userId);
@@ -118,8 +118,8 @@ public static class ProfileEndpoints
 
         profile.UpdateProfile(request.FirstName, request.LastName, request.PhoneNumber, request.Description, request.ProfileImage);
 
-        var updated = await repo.UpdateAsync(profile.Id, profile);
-        return updated is null ? Results.Problem() : Results.Ok(ToResult(updated));
+        await repo.UpdateAsync(profile.Id, profile);
+        return Results.Ok(ToResult(profile));
     }
 
     // Delete profile

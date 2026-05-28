@@ -42,5 +42,5 @@ public class ProfileRepository(DataContext context) : IProfileRepository
         await context.Profiles.AsNoTracking().ToListAsync();
 
     public async Task<ProfileEntity?> GetAsync(Expression<Func<ProfileEntity, bool>> expression) =>
-        await context.Profiles.AsNoTracking().FirstOrDefaultAsync(expression);
+        await context.Profiles.FirstOrDefaultAsync(expression);
 }
