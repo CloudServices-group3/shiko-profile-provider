@@ -1,3 +1,4 @@
+using Microsoft.EntityFrameworkCore;
 using shiko_profile_provider.Api.Endpoints;
 using shiko_profile_provider.Api.OpenApi;
 using shiko_profile_provider.Api.Security;
@@ -26,7 +27,7 @@ app.UseAuthorization();
 using (var scope = app.Services.CreateScope())
 {
     var context = scope.ServiceProvider.GetRequiredService<DataContext>();
-    await context.Database.EnsureCreatedAsync();
+    await context.Database.MigrateAsync();
 }
 
 app.MapOpenApiEndpoints();
