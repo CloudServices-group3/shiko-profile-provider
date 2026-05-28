@@ -118,8 +118,14 @@ public static class ProfileEndpoints
 
         profile.UpdateProfile(request.FirstName, request.LastName, request.PhoneNumber, request.Description, request.ProfileImage);
 
-        await repo.UpdateAsync(profile.Id, profile);
+        await repo.SaveChangesAsync();
+
         return Results.Ok(ToResult(profile));
+
+        //profile.UpdateProfile(request.FirstName, request.LastName, request.PhoneNumber, request.Description, request.ProfileImage);
+
+        //await repo.UpdateAsync(profile.Id, profile);
+        //return Results.Ok(ToResult(profile));
     }
 
     // Delete profile

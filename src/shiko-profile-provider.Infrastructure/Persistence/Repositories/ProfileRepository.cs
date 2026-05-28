@@ -15,15 +15,20 @@ public class ProfileRepository(DataContext context) : IProfileRepository
         return profile;
     }
 
-    public async Task<ProfileEntity?> UpdateAsync(Guid id, ProfileEntity profile)
+    public async Task SaveChangesAsync()
     {
-        var existing = await context.Profiles.FindAsync(id);
-        if (existing is null) return null;
-
-        context.Entry(existing).CurrentValues.SetValues(profile);
         await context.SaveChangesAsync();
-        return existing;
     }
+
+    //public async Task<ProfileEntity?> UpdateAsync(Guid id, ProfileEntity profile)
+    //{
+    //    var existing = await context.Profiles.FindAsync(id);
+    //    if (existing is null) return null;
+
+    //    context.Entry(existing).CurrentValues.SetValues(profile);
+    //    await context.SaveChangesAsync();
+    //    return existing;
+    //}
 
     public async Task<bool> DeleteAsync(Guid id)
     {
