@@ -60,10 +60,17 @@ public static class ProfileEndpoints
     // Me
     static async Task<IResult> Me (ClaimsPrincipal user, IProfileRepository repo, CancellationToken ct = default)
     {
+        foreach(var claim in user.Claims)
+        {
+            Console.WriteLine($"{claim.Type}: {claim.Value}");
+        }
         var userId = user.FindFirstValue(ClaimTypes.NameIdentifier) ?? user.FindFirstValue("sub");
+
+        Console.WriteLine($"UserID = {userId}");
 
         if (string.IsNullOrWhiteSpace(userId))
             return Results.Unauthorized();
+
         var profile = await repo.GetAsync(x => x.UserId == userId);
 
         if (profile is null)
