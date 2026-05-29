@@ -12,7 +12,7 @@ public static class ProfileEndpoints
     {
 
         var group = app.MapGroup("/api/profiles")
-            .WithTags("Profiles")
+            
             .RequireAuthorization();
 
         group.MapGet("/", GetAll);
