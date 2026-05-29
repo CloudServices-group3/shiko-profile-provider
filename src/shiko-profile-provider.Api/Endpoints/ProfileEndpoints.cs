@@ -106,7 +106,7 @@ public static class ProfileEndpoints
     // Update profile
     static async Task<IResult> Update(ProfileRequest request, ClaimsPrincipal user, IProfileRepository repo, CancellationToken ct = default)
     {
-        var userId = user.FindFirstValue(ClaimTypes.NameIdentifier) ?? user.FindFirstValue("sub");
+        var userId = user.FindFirstValue(ClaimTypes.NameIdentifier) ?? user.FindFirstValue("sub"); // Fetch UserId from Identity
 
         if (string.IsNullOrEmpty(userId))
             return Results.Unauthorized();

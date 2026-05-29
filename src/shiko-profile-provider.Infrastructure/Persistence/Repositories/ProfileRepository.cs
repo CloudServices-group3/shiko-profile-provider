@@ -36,10 +36,10 @@ public class ProfileRepository(DataContext context) : IProfileRepository
     }
 
     public async Task<bool> ExistsAsync(Expression<Func<ProfileEntity, bool>> expression) =>
-        await context.Profiles.AsNoTracking().AnyAsync(expression);
+        await context.Profiles.AnyAsync(expression);
 
     public async Task<IEnumerable<ProfileEntity>> GetAllAsync() =>
-        await context.Profiles.AsNoTracking().ToListAsync();
+        await context.Profiles.ToListAsync();
 
     public async Task<ProfileEntity?> GetAsync(Expression<Func<ProfileEntity, bool>> expression) =>
         await context.Profiles.FirstOrDefaultAsync(expression);
