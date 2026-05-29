@@ -17,7 +17,7 @@ public static class ProfileEndpoints
 
         group.MapGet("/", GetAll);
         group.MapGet("/{id:guid}", GetById);
-        group.MapGet("/me", Me);
+        group.MapPost("/me", Me);
         group.MapPost("/", Create);
         group.MapPut("/", Update); 
         group.MapDelete("/{id:guid}", Delete);      
