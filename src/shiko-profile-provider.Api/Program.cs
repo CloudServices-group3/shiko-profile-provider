@@ -27,7 +27,7 @@ app.UseAuthorization();
 using (var scope = app.Services.CreateScope())
 {
     var context = scope.ServiceProvider.GetRequiredService<DataContext>();
-    await context.Database.MigrateAsync();
+    await context.Database.EnsureCreatedAsync();
 }
 
 app.MapOpenApiEndpoints();

@@ -12,48 +12,15 @@ public static class ProfileEndpoints
     {
 
         var group = app.MapGroup("/api/profiles")
-            .WithTags("Profiles");
-
-        group.MapGet("/", GetAll)
-            .WithName("GetAllProfiles")
-            .WithSummary("Get all profiles")
-            .WithDescription("Returns a list of all profiles.")
-            .Produces<IEnumerable<ProfileResult>>();
-
-        group.MapGet("/{id:guid}", GetById)
-            .WithName("GetProfileById")
-            .WithSummary("Get a profile by ID")
-            .WithDescription("Returns a single profile matching the specific ID.")
-            .Produces<ProfileResult>()
-            .Produces(StatusCodes.Status404NotFound);
-
-        group.MapGet("/me", Me)
+            .WithTags("Profiles")
             .RequireAuthorization();
 
-        group.MapPost("/", Create)
-            .WithName("CreateProfile")
-            .WithSummary("Create a new profile")
-            .WithDescription("Creates a new profile and returns the created resource with its assigned ID.")
-            .Produces<ProfileResult>(StatusCodes.Status201Created)
-            .Produces(StatusCodes.Status500InternalServerError)
-            .RequireAuthorization();
-
-        group.MapPut("/", Update)
-            .WithName("UpdateProfile")
-            .WithSummary("Updated an existing profile")
-            .WithDescription("Updates all fields of an existing profile identified by its ID.")
-            .Produces<ProfileResult>()
-            .Produces(StatusCodes.Status404NotFound)
-            .Produces(StatusCodes.Status500InternalServerError)
-            .RequireAuthorization(); 
-
-        group.MapDelete("/{id:guid}", Delete)
-            .WithName("DeleteProfile")
-            .WithSummary("Delete a profile")
-            .WithDescription("Permanently deletes the product with the specified ID.")
-            .Produces(StatusCodes.Status204NoContent)
-            .Produces(StatusCodes.Status404NotFound)
-            .RequireAuthorization();
+        group.MapGet("/", GetAll);
+        group.MapGet("/{id:guid}", GetById);
+        group.MapGet("/me", Me);
+        group.MapPost("/", Create);
+        group.MapPut("/", Update); 
+        group.MapDelete("/{id:guid}", Delete);      
     }
 
     // Me
