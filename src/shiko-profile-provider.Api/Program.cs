@@ -1,4 +1,3 @@
-using Microsoft.EntityFrameworkCore;
 using shiko_profile_provider.Api.Endpoints;
 using shiko_profile_provider.Api.OpenApi;
 using shiko_profile_provider.Api.Security;
