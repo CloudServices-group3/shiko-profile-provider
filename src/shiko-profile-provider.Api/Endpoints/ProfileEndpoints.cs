@@ -1,5 +1,4 @@
-﻿using shiko_profile_provider.Api.Security;
-using shiko_profile_provider.Application.Abstractions;
+﻿using shiko_profile_provider.Application.Abstractions;
 using shiko_profile_provider.Application.Dtos;
 using shiko_profile_provider.Domain.Entities;
 using System.Security.Claims;

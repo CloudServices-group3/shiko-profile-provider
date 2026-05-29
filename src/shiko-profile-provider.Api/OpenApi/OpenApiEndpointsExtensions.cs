@@ -1,5 +1,4 @@
-﻿using Microsoft.Extensions.Options;
-using Scalar.AspNetCore;
+﻿using Scalar.AspNetCore;
 
 namespace shiko_profile_provider.Api.OpenApi;
 
